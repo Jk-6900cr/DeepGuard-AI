@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  /* colors */
+  --color-ink: #090D12;
+  --color-surface: #10161D;
+  --color-surface2: #171F29;
+  --color-edge: #223140;
+  --color-mist: #8A9AA8;
+  --color-fog: #EAF1F5;
+  --color-scan: #00E5C7;
+  --color-flag: #FF4D6D;
+
+  /* fonts */
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  /* animations */
+  --animate-scanline: scanline 3.2s ease-in-out infinite;
+  --animate-fadeUp: fadeUp 0.7s ease-out both;
+  --animate-pulseGlow: pulseGlow 2.4s ease-in-out infinite;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-10%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 229, 199, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 229, 199, 0);
+  }
+}
+
+body {
+  background-color: #090D12;
+  color: #EAF1F5;
+  font-family: "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #090d12;
+}
+::-webkit-scrollbar-thumb {
+  background: #223140;
+  border-radius: 999px;
+}
