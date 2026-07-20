@@ -13,21 +13,41 @@ export default function Footer() {
   return (
     <footer className="px-6 lg:px-10 py-12 border-t border-edge/60">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-        <Link to="/" className="flex items-center gap-2">
+        <a
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            window.location.assign('/');
+          }}
+          className="flex items-center gap-2"
+        >
           <span className="flex items-center justify-center w-7 h-7 rounded-lg border border-scan/40 bg-surface">
             <HiOutlineShieldCheck className="text-scan text-sm" />
           </span>
           <span className="font-display font-semibold text-sm text-fog">
             DeepGuard <span className="text-scan">AI</span>
           </span>
-        </Link>
+        </a>
 
         <ul className="flex flex-wrap items-center gap-6">
           {links.map((l) => (
             <li key={l.label}>
-              <Link to={l.to} className="text-xs text-mist hover:text-fog transition-colors">
-                {l.label}
-              </Link>
+              {l.to === "/" ? (
+                <a
+                  href="/"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.assign('/');
+                  }}
+                  className="text-xs text-mist hover:text-fog transition-colors"
+                >
+                  {l.label}
+                </a>
+              ) : (
+                <Link to={l.to} className="text-xs text-mist hover:text-fog transition-colors">
+                  {l.label}
+                </Link>
+              )}
             </li>
           ))}
         </ul>

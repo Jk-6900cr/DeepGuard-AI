@@ -30,28 +30,52 @@ export default function Navbar() {
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 h-16">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
+        <a
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            window.location.assign('/');
+          }}
+          className="flex items-center gap-2 group"
+        >
           <span className="relative flex items-center justify-center w-8 h-8 rounded-lg border border-scan/40 bg-surface group-hover:border-scan transition-colors">
             <HiOutlineShieldCheck className="text-scan text-lg" />
           </span>
           <span className="font-display font-semibold text-[15px] tracking-tight text-fog">
             DeepGuard <span className="text-scan">AI</span>
           </span>
-        </Link>
+        </a>
 
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <li key={link.label}>
-              <NavLink
-                to={link.to}
-                className="relative text-sm text-mist hover:text-fog transition-colors duration-200 py-1 group"
-              >
-                {link.label}
-                <span className="absolute left-0 -bottom-0.5 w-0 h-px bg-scan transition-all duration-300 group-hover:w-full" />
-              </NavLink>
-            </li>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const isHome = link.to === "/";
+            return (
+              <li key={link.label}>
+                {isHome ? (
+                  <a
+                    href="/"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.assign('/');
+                    }}
+                    className="relative text-sm text-mist hover:text-fog transition-colors duration-200 py-1 group"
+                  >
+                    {link.label}
+                    <span className="absolute left-0 -bottom-0.5 w-0 h-px bg-scan transition-all duration-300 group-hover:w-full" />
+                  </a>
+                ) : (
+                  <NavLink
+                    to={link.to}
+                    className="relative text-sm text-mist hover:text-fog transition-colors duration-200 py-1 group"
+                  >
+                    {link.label}
+                    <span className="absolute left-0 -bottom-0.5 w-0 h-px bg-scan transition-all duration-300 group-hover:w-full" />
+                  </NavLink>
+                )}
+              </li>
+            );
+          })}
         </ul>
 
         {/* Auth buttons */}

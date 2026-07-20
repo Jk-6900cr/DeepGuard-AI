@@ -3,12 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { HiOutlineUser } from "react-icons/hi2";
 import { FcGoogle } from "react-icons/fc";
 import { AuthLayout, InputField, PasswordField, AuthButton } from "../components/auth";
+import { useAuth } from "../hooks/useAuth";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[6-9]\d{9}$/;
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [form, setForm] = useState({ identifier: "", password: "" });
   const [errors, setErrors] = useState({});
@@ -43,9 +45,9 @@ export default function Login() {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    const result = await login(form);
     setLoading(false);
-    navigate("/");
+    if (result.success) navigate("/dashboard");
   };
 
   // Frontend-only stub — swap this for real OAuth, e.g. Firebase/Google Identity Services

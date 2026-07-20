@@ -1,34 +1,78 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
-import Upload from "./pages/Upload";
-import Result from "./pages/Result";
+import UploadImage from "./pages/UploadImage";
+import UploadVideo from "./pages/UploadVideo";
 import History from "./pages/History";
 import Profile from "./pages/Profile";
-import NotFound from "./pages/NotFound";
+import Result from "./pages/Result";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
+      <AuthProvider>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-
-        {/* Future Pages */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/upload" element={<Upload />} />
-        <Route path="/result" element={<Result />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/profile" element={<Profile />} />
-
-        {/* 404 Page */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          {/* Protected routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/upload/image"
+            element={
+              <ProtectedRoute>
+                <UploadImage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/upload/video"
+            element={
+              <ProtectedRoute>
+                <UploadVideo />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <History />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/result"
+            element={
+              <ProtectedRoute>
+                <Result />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

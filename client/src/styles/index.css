@@ -10,6 +10,8 @@
   --color-fog: #EAF1F5;
   --color-scan: #00E5C7;
   --color-flag: #FF4D6D;
+  --color-success: #34D399;
+  --color-warning: #F59E0B;
 
   /* fonts */
   --font-display: "Space Grotesk", sans-serif;
