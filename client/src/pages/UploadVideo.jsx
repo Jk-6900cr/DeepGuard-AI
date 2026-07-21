@@ -9,6 +9,7 @@ import ValidationMessage from "../components/upload/ValidationMessage";
 import UploadButton from "../components/upload/UploadButton";
 import UploadTips from "../components/upload/UploadTips";
 import UploadInfoPanel from "../components/upload/UploadInfoPanel";
+import { useNavigate } from "react-router-dom";
 
 const VIDEO_TIPS = [
   "Upload the original quality file — avoid re-compressed exports.",
@@ -35,24 +36,23 @@ export default function UploadVideo() {
   } = useFileUpload(VIDEO_UPLOAD_CONFIG);
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const navigate = useNavigate();
 
   const handleAnalyze = () => {
-    if (!file) return;
-    setIsAnalyzing(true);
+  if (!file) return;
 
-    // TODO:
-    // Send video to backend API
-    // POST /api/analyze/video
-    //
-    // const formData = new FormData();
-    // formData.append("video", file);
-    // const response = await fetch("/api/analyze/video", { method: "POST", body: formData });
-    // const result = await response.json();
-    // navigate("/result", { state: { result } });
+  // TODO:
+  // Send image to backend API
+  // POST /api/analyze/image
+  //
+  // const formData = new FormData();
+  // formData.append("image", file);
+  // const response = await fetch("/api/analyze/image", { method: "POST", body: formData });
+  // const result = await response.json();
+  // navigate("/result", { state: { result } });
 
-    console.log("Analyze Video clicked — backend not connected yet.", file);
-    setIsAnalyzing(false);
-  };
+  navigate("/processing", { state: { file, type: "video" } });
+};
 
   return (
     <div className="min-h-screen bg-ink px-6 lg:px-10 py-10">

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Processing from "./pages/Processing";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -68,6 +69,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Result />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/processing"
+            element={
+              <ProtectedRoute>
+                <Processing />
               </ProtectedRoute>
             }
           />

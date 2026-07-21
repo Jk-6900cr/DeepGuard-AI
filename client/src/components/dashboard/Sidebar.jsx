@@ -60,7 +60,7 @@ export default function Sidebar({ open, onClose }) {
           <button
             type="button"
             onClick={() => window.location.assign("/")}
-            className="flex items-center gap-2 text-left"
+            className="flex items-center gap-2 text-left cursor-pointer hover:opacity-90 transition-opacity duration-200"
           >
             <span className="flex items-center justify-center w-8 h-8 rounded-lg border border-scan/40 bg-surface2">
               <HiOutlineShieldCheck className="text-scan text-lg" />

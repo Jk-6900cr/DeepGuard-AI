@@ -12,6 +12,10 @@
   --color-flag: #FF4D6D;
   --color-success: #34D399;
   --color-warning: #F59E0B;
+  --animate-spin-slow: spin 3s linear infinite;
+  --animate-pulse-ring: pulseRing 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-particle: particleFloat 7s ease-in-out infinite;
+  --animate-fade-in: fadeIn 0.4s ease-out both;
 
   /* fonts */
   --font-display: "Space Grotesk", sans-serif;
@@ -29,12 +33,15 @@
     transform: translateY(-10%);
     opacity: 0;
   }
+
   10% {
     opacity: 1;
   }
+
   90% {
     opacity: 1;
   }
+
   100% {
     transform: translateY(110%);
     opacity: 0;
@@ -46,6 +53,7 @@
     opacity: 0;
     transform: translateY(16px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -53,12 +61,47 @@
 }
 
 @keyframes pulseGlow {
+
   0%,
   100% {
     box-shadow: 0 0 0 0 rgba(0, 229, 199, 0.35);
   }
+
   50% {
     box-shadow: 0 0 0 8px rgba(0, 229, 199, 0);
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  80%, 100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateY(-24px) translateX(8px);
+    opacity: 0.5;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -69,12 +112,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: #090d12;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #223140;
   border-radius: 999px;

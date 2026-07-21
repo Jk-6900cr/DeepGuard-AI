@@ -9,6 +9,7 @@ import ValidationMessage from "../components/upload/ValidationMessage";
 import UploadButton from "../components/upload/UploadButton";
 import UploadTips from "../components/upload/UploadTips";
 import UploadInfoPanel from "../components/upload/UploadInfoPanel";
+import { useNavigate } from "react-router-dom";
 
 const IMAGE_TIPS = [
   "Upload a clear, well-lit face for the most accurate result.",
@@ -35,24 +36,23 @@ export default function UploadImage() {
   } = useFileUpload(IMAGE_UPLOAD_CONFIG);
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const navigate = useNavigate();
 
   const handleAnalyze = () => {
-    if (!file) return;
-    setIsAnalyzing(true);
+  if (!file) return;
 
-    // TODO:
-    // Send image to backend API
-    // POST /api/analyze/image
-    //
-    // const formData = new FormData();
-    // formData.append("image", file);
-    // const response = await fetch("/api/analyze/image", { method: "POST", body: formData });
-    // const result = await response.json();
-    // navigate("/result", { state: { result } });
+  // TODO:
+  // Send image to backend API
+  // POST /api/analyze/image
+  //
+  // const formData = new FormData();
+  // formData.append("image", file);
+  // const response = await fetch("/api/analyze/image", { method: "POST", body: formData });
+  // const result = await response.json();
+  // navigate("/result", { state: { result } });
 
-    console.log("Analyze Image clicked — backend not connected yet.", file);
-    setIsAnalyzing(false);
-  };
+  navigate("/processing", { state: { file, type: "image" } });
+};
 
   return (
     <div className="min-h-screen bg-ink px-6 lg:px-10 py-10">
