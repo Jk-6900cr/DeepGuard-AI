@@ -38,20 +38,30 @@ export default function UploadImage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const navigate = useNavigate();
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
   if (!file) return;
 
-  // TODO:
-  // Send image to backend API
-  // POST /api/analyze/image
-  //
-  // const formData = new FormData();
-  // formData.append("image", file);
-  // const response = await fetch("/api/analyze/image", { method: "POST", body: formData });
-  // const result = await response.json();
-  // navigate("/result", { state: { result } });
+  setIsAnalyzing(true);
 
-  navigate("/processing", { state: { file, type: "image" } });
+  try {
+    const response = await fetch("http://localhost:5000/api/analyze/image");
+
+    const result = await response.json();
+
+    console.log(result);
+
+    navigate("/processing", {
+      state: {
+        file,
+        type: "image",
+        result,
+      },
+    });
+  } catch (error) {
+    console.error("API Error:", error);
+  } finally {
+    setIsAnalyzing(false);
+  }
 };
 
   return (
