@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { HiOutlinePhoto } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
+
 import { useFileUpload } from "../hooks/useFileUpload";
 import { IMAGE_UPLOAD_CONFIG } from "../utils/uploadConfig";
+
 import UploadHeader from "../components/upload/UploadHeader";
 import DropZone from "../components/upload/DropZone";
 import FilePreview from "../components/upload/FilePreview";
@@ -9,7 +12,6 @@ import ValidationMessage from "../components/upload/ValidationMessage";
 import UploadButton from "../components/upload/UploadButton";
 import UploadTips from "../components/upload/UploadTips";
 import UploadInfoPanel from "../components/upload/UploadInfoPanel";
-import { useNavigate } from "react-router-dom";
 
 const IMAGE_TIPS = [
   "Upload a clear, well-lit face for the most accurate result.",
@@ -44,21 +46,23 @@ export default function UploadImage() {
   setIsAnalyzing(true);
 
   try {
-    const response = await fetch("http://localhost:5000/api/analyze/image");
+    const response = await fetch("/api/analyze/image");
 
-    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
 
-    console.log(result);
+    const data = await response.json();
 
     navigate("/processing", {
       state: {
         file,
         type: "image",
-        result,
+        result: data,
       },
     });
-  } catch (error) {
-    console.error("API Error:", error);
+  } catch (err) {
+    console.error("API Error:", err);
   } finally {
     setIsAnalyzing(false);
   }
@@ -79,12 +83,14 @@ export default function UploadImage() {
           accept={IMAGE_UPLOAD_CONFIG.inputAccept}
           onChange={handleInputChange}
           className="hidden"
-          aria-hidden="true"
         />
 
         <div className="grid lg:grid-cols-3 gap-6 mt-8">
           <div className="lg:col-span-2 flex flex-col gap-5">
-            <ValidationMessage message={error} onDismiss={() => setError("")} />
+            <ValidationMessage
+              message={error}
+              onDismiss={() => setError("")}
+            />
 
             {!file ? (
               <DropZone
@@ -107,7 +113,12 @@ export default function UploadImage() {
               />
             )}
 
-            <UploadButton label="Analyze Image" onClick={handleAnalyze} disabled={!file} loading={isAnalyzing} />
+            <UploadButton
+              label="Analyze Image"
+              onClick={handleAnalyze}
+              disabled={!file || isAnalyzing}
+              loading={isAnalyzing}
+            />
           </div>
 
           <div className="flex flex-col gap-5">
