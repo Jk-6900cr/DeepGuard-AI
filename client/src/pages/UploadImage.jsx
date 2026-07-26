@@ -41,32 +41,51 @@ export default function UploadImage() {
   const navigate = useNavigate();
 
   const handleAnalyze = async () => {
-  if (!file) return;
+    if (!file) return;
 
-  setIsAnalyzing(true);
+    setIsAnalyzing(true);
 
-  try {
-    const response = await fetch("/api/analyze/image");
+    try {
+      // Create FormData
+      const formData = new FormData();
+      formData.append("image", file);
 
-    if (!response.ok) {
-      throw new Error(`HTTP Error: ${response.status}`);
+      // Upload image to backend through the Vite proxy
+      const uploadResponse = await fetch("/api/upload/image", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error(`Upload failed: ${uploadResponse.status}`);
+      }
+
+      const uploadData = await uploadResponse.json();
+      console.log("Upload Success:", uploadData);
+
+      // Get dummy AI result (we'll replace this with the real model later)
+      const analyzeResponse = await fetch("/api/analyze/image");
+
+      if (!analyzeResponse.ok) {
+        throw new Error(`HTTP Error: ${analyzeResponse.status}`);
+      }
+
+      const result = await analyzeResponse.json();
+
+      navigate("/processing", {
+        state: {
+          file, 
+          type: "image",
+          result,
+        },
+      });
+    } catch (err) {
+      console.error("API Error:", err);
+      setError(err.message || "Unable to analyze image right now.");
+    } finally {
+      setIsAnalyzing(false);
     }
-
-    const data = await response.json();
-
-    navigate("/processing", {
-      state: {
-        file,
-        type: "image",
-        result: data,
-      },
-    });
-  } catch (err) {
-    console.error("API Error:", err);
-  } finally {
-    setIsAnalyzing(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-ink px-6 lg:px-10 py-10">
