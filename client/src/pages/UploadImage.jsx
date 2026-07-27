@@ -63,20 +63,11 @@ export default function UploadImage() {
       const uploadData = await uploadResponse.json();
       console.log("Upload Success:", uploadData);
 
-      // Get dummy AI result (we'll replace this with the real model later)
-      const analyzeResponse = await fetch("/api/analyze/image");
-
-      if (!analyzeResponse.ok) {
-        throw new Error(`HTTP Error: ${analyzeResponse.status}`);
-      }
-
-      const result = await analyzeResponse.json();
-
       navigate("/processing", {
         state: {
           file, 
           type: "image",
-          result,
+          result: uploadData.prediction,
         },
       });
     } catch (err) {
