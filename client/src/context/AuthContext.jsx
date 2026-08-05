@@ -22,10 +22,44 @@ export function AuthProvider({ children }) {
 
   // TODO backend: POST /api/auth/signup { fullName, email, mobile, otp } -> { token, user }
   const signup = useCallback(async (details) => {
-    console.log("signup() called with:", details);
-    persistAuthenticated();
-    setIsAuthenticated(true);
-    return { success: true };
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: details.fullName,
+          email: details.email,
+          mobile: details.mobile,
+          password: details.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: data.message,
+        };
+      }
+
+      // Temporary authentication
+      persistAuthenticated();
+      setIsAuthenticated(true);
+      setUser(data.user);
+
+      return {
+        success: true,
+        user: data.user,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
   }, []);
 
   const logout = useCallback(() => {
