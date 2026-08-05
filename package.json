@@ -1,4 +1,11 @@
 {
+  "private": true,
+  "scripts": {
+    "server": "npm --prefix server start",
+    "client": "npm --prefix client run dev",
+    "dev": "npm run server",
+    "start": "npm run client"
+  },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.18.1",
