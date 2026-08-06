@@ -51,8 +51,13 @@ export default function UploadImage() {
       formData.append("image", file);
 
       // Upload image to backend through the Vite proxy
-      const uploadResponse = await fetch("/api/upload/image", {
+      const token = localStorage.getItem("token");
+
+      const uploadResponse = await fetch("http://localhost:5000/api/upload/image", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 
@@ -65,7 +70,7 @@ export default function UploadImage() {
 
       navigate("/processing", {
         state: {
-          file, 
+          file,
           type: "image",
           result: uploadData.prediction,
         },

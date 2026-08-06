@@ -51,8 +51,13 @@ export default function UploadVideo() {
       formData.append("video", file);
 
       // Upload video to backend
-      const uploadResponse = await fetch("/api/upload/video", {
+      const token = localStorage.getItem("token");
+
+      const uploadResponse = await fetch("http://localhost:5000/api/upload/video", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 

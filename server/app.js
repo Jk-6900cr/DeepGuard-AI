@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const upload = require("./middleware/upload");
 const uploadVideo = require("./middleware/uploadVideo");
+const authMiddleware = require("./middleware/authMiddleware");
+const Prediction = require("./models/Prediction");
 const authRoutes = require("./routes/authRoutes");
 const path = require("path");
 const { spawn } = require("child_process");
@@ -38,7 +40,7 @@ app.get("/api/analyze/image", (req, res) => {
     console.error("Python Error:", data.toString());
   });
 
-  python.on("close", (code) => {
+  python.on("close", async (code) => {
     if (code !== 0) {
       return res.status(500).json({
         success: false,
@@ -57,7 +59,7 @@ app.get("/api/analyze/image", (req, res) => {
   });
 });
 
-app.post("/api/upload/image", upload, (req, res) => {
+app.post("/api/upload/image", authMiddleware, upload, async (req, res) => {
   try {
     console.log("Uploaded File:", req.file);
 
@@ -78,7 +80,7 @@ app.post("/api/upload/image", upload, (req, res) => {
       console.error("Python Error:", data.toString());
     });
 
-    python.on("close", (code) => {
+    python.on("close", async (code) => {
       if (code !== 0) {
         return res.status(500).json({
           success: false,
@@ -88,6 +90,16 @@ app.post("/api/upload/image", upload, (req, res) => {
 
       try {
         const prediction = JSON.parse(result);
+        await Prediction.create({
+          user: req.user.id,
+          fileType: "image",
+          filename: req.file.filename,
+          filepath: req.file.path,
+          prediction: prediction.prediction,
+          confidence: prediction.confidence,
+          risk: prediction.risk,
+          summary: prediction.summary,
+        });
 
         res.status(200).json({
           success: true,
@@ -110,7 +122,7 @@ app.post("/api/upload/image", upload, (req, res) => {
   }
 });
 
-app.post("/api/upload/video", uploadVideo, (req, res) => {
+app.post("/api/upload/video", authMiddleware, uploadVideo, async (req, res) => {
   try {
     console.log("Uploaded Video:", req.file);
 
@@ -131,7 +143,7 @@ app.post("/api/upload/video", uploadVideo, (req, res) => {
       console.error("Python Error:", data.toString());
     });
 
-    python.on("close", (code) => {
+    python.on("close", async (code) => {
       if (code !== 0) {
         return res.status(500).json({
           success: false,
@@ -141,6 +153,16 @@ app.post("/api/upload/video", uploadVideo, (req, res) => {
 
       try {
         const prediction = JSON.parse(result);
+        await Prediction.create({
+          user: req.user.id,
+          fileType: "video",
+          filename: req.file.filename,
+          filepath: req.file.path,
+          prediction: prediction.prediction,
+          confidence: prediction.confidence,
+          risk: prediction.risk,
+          summary: prediction.summary,
+        });
 
         res.status(200).json({
           success: true,
