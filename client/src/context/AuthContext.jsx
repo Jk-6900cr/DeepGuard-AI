@@ -14,16 +14,51 @@ export function AuthProvider({ children }) {
   // TODO backend: POST /api/auth/login { identifier, password } -> { token, user }
   // Replace persistAuthenticated() with setToken(token) from utils/auth.js.
   const login = useCallback(async (credentials) => {
-    console.log("login() called with:", credentials);
-    persistAuthenticated();
-    setIsAuthenticated(true);
-    return { success: true };
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: credentials.identifier,
+          password: credentials.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: data.message,
+        };
+      }
+
+      // Store JWT token
+      localStorage.setItem("token", data.token);
+
+      // Temporary authentication
+      persistAuthenticated();
+      setIsAuthenticated(true);
+      setUser(data.user);
+
+      return {
+        success: true,
+        user: data.user,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
   }, []);
 
   // TODO backend: POST /api/auth/signup { fullName, email, mobile, otp } -> { token, user }
   const signup = useCallback(async (details) => {
     try {
-      const response = await fetch("/api/auth/signup", {
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
