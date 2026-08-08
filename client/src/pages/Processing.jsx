@@ -12,18 +12,12 @@ import ModelCard from "../components/processing/ModelCard";
 export default function Processing() {
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Populated by UploadImage.jsx / UploadVideo.jsx via:
-  //   navigate("/processing", { state: { file, type } })
-  const { file, type } = location.state ?? {};
+  const { file, type, predictionId } = location.state ?? {};
   const uploadTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   const { progress, currentStepIndex, estimatedSecondsRemaining, currentMessage } =
     useProcessingSimulation(() => {
-      // TODO backend:
-      // Pass the real analysis result through instead of just file/type,
-      // e.g. state: { result } from the POST /api/analyze/* response.
-      navigate("/result", { state: { file, type } });
+      navigate(`/result/${predictionId}`);
     });
 
   return (

@@ -1,11 +1,30 @@
 import { motion } from "framer-motion";
-import { HiOutlineShieldCheck, HiOutlineExclamationTriangle } from "react-icons/hi2";
+import {
+  HiOutlineShieldCheck,
+  HiOutlineExclamationTriangle,
+} from "react-icons/hi2";
 import RiskBadge from "./RiskBadge";
 import ConfidenceCard from "./ConfidenceCard";
 
-export default function PredictionCard({ prediction, confidence, riskLevel }) {
-  const isAuthentic = prediction.isAuthentic;
-  const Icon = isAuthentic ? HiOutlineShieldCheck : HiOutlineExclamationTriangle;
+export default function PredictionCard({
+  prediction,
+  confidence,
+  riskLevel,
+}) {
+  const isAuthentic =
+    prediction === "Authentic" ||
+    prediction?.label === "Authentic" ||
+    prediction?.isAuthentic === true;
+
+  const label =
+    typeof prediction === "string"
+      ? prediction
+      : prediction?.label || "Unknown";
+
+  const Icon = isAuthentic
+    ? HiOutlineShieldCheck
+    : HiOutlineExclamationTriangle;
+
   const tone = isAuthentic ? "success" : "flag";
 
   return (
@@ -30,7 +49,9 @@ export default function PredictionCard({ prediction, confidence, riskLevel }) {
         <div>
           <span
             className={`inline-flex items-center gap-2 text-xs font-mono px-3 py-1 rounded-full border ${
-              isAuthentic ? "text-success bg-success/10 border-success/30" : "text-flag bg-flag/10 border-flag/30"
+              isAuthentic
+                ? "text-success bg-success/10 border-success/30"
+                : "text-flag bg-flag/10 border-flag/30"
             }`}
           >
             <Icon className="text-sm" />
@@ -42,11 +63,12 @@ export default function PredictionCard({ prediction, confidence, riskLevel }) {
               isAuthentic ? "text-success" : "text-flag"
             }`}
           >
-            {prediction.label}
+            {label}
           </h2>
 
           <p className="text-sm text-mist mt-3 max-w-sm">
-            DeepGuard AI has completed its forensic analysis of this media file.
+            DeepGuard AI has completed its forensic analysis of this media
+            file.
           </p>
 
           <div className="mt-6">

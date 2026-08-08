@@ -73,6 +73,7 @@ export default function UploadVideo() {
           file,
           type: "video",
           result: uploadData.prediction,
+          predictionId: uploadData.predictionId,
         },
       });
     } catch (err) {

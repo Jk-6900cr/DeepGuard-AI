@@ -92,7 +92,7 @@ app.post("/api/upload/image", authMiddleware, upload, async (req, res) => {
 
       try {
         const prediction = JSON.parse(result);
-        await Prediction.create({
+        const savedPrediction = await Prediction.create({
           user: req.user.id,
           fileType: "image",
           filename: req.file.filename,
@@ -105,6 +105,7 @@ app.post("/api/upload/image", authMiddleware, upload, async (req, res) => {
 
         res.status(200).json({
           success: true,
+          predictionId: savedPrediction._id,
           filename: req.file.filename,
           filepath: req.file.path,
           prediction,
@@ -155,7 +156,7 @@ app.post("/api/upload/video", authMiddleware, uploadVideo, async (req, res) => {
 
       try {
         const prediction = JSON.parse(result);
-        await Prediction.create({
+        const savedPrediction = await Prediction.create({
           user: req.user.id,
           fileType: "video",
           filename: req.file.filename,
@@ -168,6 +169,7 @@ app.post("/api/upload/video", authMiddleware, uploadVideo, async (req, res) => {
 
         res.status(200).json({
           success: true,
+          predictionId: savedPrediction._id,
           filename: req.file.filename,
           filepath: req.file.path,
           prediction,

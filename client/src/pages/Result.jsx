@@ -1,4 +1,5 @@
-import { useLocation, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { HiOutlineFaceFrown } from "react-icons/hi2";
 
@@ -72,40 +73,170 @@ function NoResultState() {
 }
 
 export default function Result() {
-  const location = useLocation();
-  const { file, type, metadata } = location.state ?? {};
+  const { id } = useParams();
 
-  if (!location.state) return <NoResultState />;
+  const [prediction, setPrediction] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const uploadTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  useEffect(() => {
+    const fetchPrediction = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("Authentication token not found.");
+        }
+
+        const response = await fetch(
+          `http://localhost:5000/api/predictions/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message || "Failed to load prediction."
+          );
+        }
+
+        console.log("Prediction:", data.prediction);
+
+        setPrediction(data.prediction);
+      } catch (err) {
+        console.error("Result Error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrediction();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-ink flex items-center justify-center px-6">
+        <p className="text-sm text-mist">
+          Loading analysis report...
+        </p>
+      </div>
+    );
+  }
+
+  if (error || !prediction) {
+    return (
+      <div className="min-h-screen bg-ink flex items-center justify-center px-6">
+        <div className="text-center">
+          <h1 className="font-display text-2xl font-semibold text-fog">
+            Report not found
+          </h1>
+
+          <p className="text-sm text-mist mt-2">
+            {error || "We couldn't find this analysis report."}
+          </p>
+
+          <Link
+            to="/history"
+            className="inline-block mt-5 text-sm text-scan hover:underline"
+          >
+            ← Back to History
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const uploadTime = new Date(
+    prediction.createdAt
+  ).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const fileType =
+    prediction.fileType === "image"
+      ? "image"
+      : "video";
+
+  const result =
+    prediction.prediction === "Authentic"
+      ? "Authentic"
+      : "AI Generated";
 
   return (
-    <div className="relative min-h-screen bg-ink px-6 py-14 overflow-hidden">
+    <div className="min-h-screen bg-ink px-6 lg:px-10 py-10 relative overflow-hidden">
       <ResultBackground />
 
       <div className="relative z-10 max-w-6xl mx-auto flex flex-col gap-8">
+
         <ResultHeader />
 
-        <PredictionCard prediction={PREDICTION} confidence={CONFIDENCE_SCORE} riskLevel={RISK_LEVEL} />
+        <PredictionCard
+          prediction={result}
+          confidence={prediction.confidence}
+          riskLevel={prediction.risk}
+        />
 
         <div className="grid lg:grid-cols-3 gap-6">
+
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <AnalysisSummary points={ANALYSIS_SUMMARY} />
-            <DetectionCards details={DETECTION_DETAILS} />
+
+            <AnalysisSummary
+              points={
+                prediction.summary
+                  ? [prediction.summary]
+                  : ["Analysis completed successfully."]
+              }
+            />
+
+            <DetectionCards
+              details={[]}
+            />
+
           </div>
 
           <div className="flex flex-col gap-6">
-            <TrustScore score={TRUST_SCORE} />
-            <FileDetailsCard file={file} type={type} metadata={metadata} uploadTime={uploadTime} />
+
+            <TrustScore
+              score={prediction.confidence}
+            />
+
+            <FileDetailsCard
+              file={{
+                name: prediction.filename,
+              }}
+              type={fileType}
+              metadata={null}
+              uploadTime={uploadTime}
+            />
+
           </div>
+
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
-          <Timeline steps={PIPELINE_STEPS} />
-          <ModelCard info={MODEL_INFO} />
+
+          <Timeline
+            steps={[]}
+          />
+
+          <ModelCard
+            info={MODEL_INFO}
+          />
+
         </div>
 
-        <ActionButtons type={type} />
+        <ActionButtons
+          type={fileType}
+        />
+
       </div>
     </div>
   );

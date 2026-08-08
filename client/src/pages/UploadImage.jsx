@@ -73,6 +73,7 @@ export default function UploadImage() {
           file,
           type: "image",
           result: uploadData.prediction,
+          predictionId: uploadData.predictionId,
         },
       });
     } catch (err) {

@@ -213,7 +213,7 @@ export default function History() {
 
                         <td className="px-6 py-4 text-right">
                           <Link
-                            to="/result"
+                            to={`/result/${item._id}`}
                             className="text-xs text-scan hover:underline underline-offset-4"
                           >
                             View Report

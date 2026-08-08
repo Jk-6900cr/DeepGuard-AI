@@ -79,7 +79,36 @@ const getPredictionHistory = async (req, res) => {
   }
 };
 
+const getPredictionById = async (req, res) => {
+  try {
+    const prediction = await Prediction.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
+
+    if (!prediction) {
+      return res.status(404).json({
+        success: false,
+        message: "Prediction not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      prediction,
+    });
+  } catch (error) {
+    console.error("Get Prediction Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to load prediction",
+    });
+  }
+};
+
 module.exports = {
   getDashboardStats,
   getPredictionHistory,
+  getPredictionById,
 };

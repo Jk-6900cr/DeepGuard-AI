@@ -141,7 +141,7 @@ export default function RecentScans() {
 
                 <td className="px-6 py-3.5 text-right">
                   <Link
-                    to="/result"
+                    to={`/result/${scan.id}`}
                     className="text-xs text-scan hover:underline underline-offset-4"
                   >
                     View Report
