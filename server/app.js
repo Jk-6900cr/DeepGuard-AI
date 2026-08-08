@@ -6,6 +6,7 @@ const uploadVideo = require("./middleware/uploadVideo");
 const authMiddleware = require("./middleware/authMiddleware");
 const Prediction = require("./models/Prediction");
 const authRoutes = require("./routes/authRoutes");
+const predictionRoutes = require("./routes/predictionRoutes");
 const path = require("path");
 const { spawn } = require("child_process");
 const connectDB = require("./config/db");
@@ -16,6 +17,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/predictions", predictionRoutes);
 
 app.get("/", (req, res) => {
   res.send("DeepGuard AI Backend is Running 🚀");

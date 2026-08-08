@@ -1,37 +1,109 @@
-import { HiOutlineDocumentMagnifyingGlass, HiOutlinePhoto, HiOutlineVideoCamera, HiOutlineChartBar, HiArrowTrendingUp, HiArrowTrendingDown } from "react-icons/hi2";
+import {
+  HiOutlineDocumentMagnifyingGlass,
+  HiOutlinePhoto,
+  HiOutlineVideoCamera,
+  HiOutlineChartBar,
+  HiArrowTrendingUp,
+  HiArrowTrendingDown,
+} from "react-icons/hi2";
 
-const STATS = [
-  { label: "Total Scans", value: "1,284", trend: "+12.4%", up: true, icon: HiOutlineDocumentMagnifyingGlass },
-  { label: "Images Scanned", value: "842", trend: "+8.1%", up: true, icon: HiOutlinePhoto },
-  { label: "Videos Scanned", value: "442", trend: "+4.7%", up: true, icon: HiOutlineVideoCamera },
-  { label: "Detection Accuracy", value: "98.6%", trend: "-0.3%", up: false, icon: HiOutlineChartBar },
-];
+export default function StatsCards({ stats, loading, error }) {
+  const STATS = [
+    {
+      label: "Total Scans",
+      value: stats?.totalScans ?? 0,
+      trend: null,
+      up: true,
+      icon: HiOutlineDocumentMagnifyingGlass,
+    },
+    {
+      label: "Images Scanned",
+      value: stats?.imageScans ?? 0,
+      trend: null,
+      up: true,
+      icon: HiOutlinePhoto,
+    },
+    {
+      label: "Videos Scanned",
+      value: stats?.videoScans ?? 0,
+      trend: null,
+      up: true,
+      icon: HiOutlineVideoCamera,
+    },
+    {
+      label: "Detection Accuracy",
+      value: stats
+        ? `${stats.averageConfidence}%`
+        : "0%",
+      trend: null,
+      up: true,
+      icon: HiOutlineChartBar,
+    },
+  ];
 
-export default function StatsCards() {
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map((item) => (
+          <div
+            key={item}
+            className="rounded-2xl bg-surface border border-edge p-5 animate-pulse"
+          >
+            <div className="h-4 w-24 bg-surface2 rounded mb-4" />
+            <div className="h-8 w-20 bg-surface2 rounded" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-2xl bg-surface border border-edge p-5 text-sm text-flag">
+        Unable to load dashboard statistics.
+      </div>
+    );
+  }
+
   return (
-    <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       {STATS.map(({ label, value, trend, up, icon: Icon }) => (
         <div
           key={label}
-          className="p-5 rounded-2xl bg-surface border border-edge hover:border-scan/40 hover:-translate-y-0.5 transition-all duration-300"
+          className="rounded-2xl bg-surface border border-edge p-5 hover:border-scan/30 transition-colors duration-300"
         >
-          <div className="flex items-center justify-between">
-            <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-surface2 text-scan">
-              <Icon className="text-lg" />
-            </span>
-            <span
-              className={`flex items-center gap-1 text-xs font-mono ${
-                up ? "text-success" : "text-flag"
-              }`}
-            >
-              {up ? <HiArrowTrendingUp /> : <HiArrowTrendingDown />}
-              {trend}
-            </span>
+          <div className="flex items-start justify-between">
+            <div className="w-10 h-10 rounded-xl bg-surface2 flex items-center justify-center">
+              <Icon className="text-xl text-scan" />
+            </div>
+
+            {trend && (
+              <span
+                className={`flex items-center gap-1 text-xs font-mono ${
+                  up ? "text-success" : "text-flag"
+                }`}
+              >
+                {up ? (
+                  <HiArrowTrendingUp />
+                ) : (
+                  <HiArrowTrendingDown />
+                )}
+                {trend}
+              </span>
+            )}
           </div>
-          <p className="font-display text-2xl font-semibold text-fog mt-4">{value}</p>
-          <p className="text-xs text-mist mt-1">{label}</p>
+
+          <div className="mt-5">
+            <p className="text-3xl font-display font-semibold text-fog">
+              {value}
+            </p>
+
+            <p className="text-sm text-mist mt-1">
+              {label}
+            </p>
+          </div>
         </div>
       ))}
-    </section>
+    </div>
   );
 }
