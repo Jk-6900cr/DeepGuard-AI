@@ -5,10 +5,17 @@ import { formatFileSize } from "../../utils/fileHelpers";
 export default function FileDetailsCard({ file, type, metadata, uploadTime }) {
   const Icon = type === "video" ? HiOutlineVideoCamera : HiOutlinePhoto;
 
-  const fileName = file?.name ?? "sample_media.jpg";
-  const fileSize = file ? formatFileSize(file.size) : "4.2 MB";
+  const fileName = file?.name ?? "Unknown file";
+
+  const fileSize = file?.size
+    ? formatFileSize(file.size)
+    : "Unknown";
+
   const mediaType = type === "video" ? "Video" : "Image";
-  const resolution = metadata?.width ? `${metadata.width} × ${metadata.height}` : "1920 × 1080";
+
+  const resolution = metadata?.width
+    ? `${metadata.width} × ${metadata.height}`
+    : "Not available";
 
   const rows = [
     { label: "File Name", value: fileName, mono: true, truncate: true },

@@ -24,6 +24,22 @@ const predictionSchema = new mongoose.Schema(
       required: true,
     },
 
+    fileSize: {
+      type: Number,
+      required: true,
+    },
+
+    resolution: {
+      width: {
+        type: Number,
+        required: false,
+      },
+      height: {
+        type: Number,
+        required: false,
+      },
+    },
+
     prediction: {
       type: String,
       required: true,

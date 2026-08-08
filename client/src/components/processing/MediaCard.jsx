@@ -5,13 +5,19 @@ import {
 
 import { formatFileSize } from "../../utils/fileHelpers";
 
-export default function MediaCard({ file, type, uploadTime }) {
+export default function MediaCard({
+  file,
+  type,
+  metadata,
+  uploadTime,
+}) {
   const Icon =
     type === "video"
       ? HiOutlineVideoCamera
       : HiOutlinePhoto;
 
   const fileName = file?.name || "Unknown file";
+
   const fileSize = file?.size
     ? formatFileSize(file.size)
     : "Unknown";
@@ -19,8 +25,13 @@ export default function MediaCard({ file, type, uploadTime }) {
   const mediaType =
     type === "video" ? "Video" : "Image";
 
+  const resolution = metadata?.width
+    ? `${metadata.width} × ${metadata.height}`
+    : "Not available";
+
   return (
     <div className="rounded-2xl bg-surface border border-edge p-6">
+      {/* Header */}
       <div className="flex items-center gap-3 mb-5">
         <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-surface2 border border-edge text-scan">
           <Icon className="text-lg" />
@@ -37,8 +48,10 @@ export default function MediaCard({ file, type, uploadTime }) {
         </div>
       </div>
 
+      {/* Media Details */}
       <dl className="flex flex-col gap-3.5 text-sm">
 
+        {/* File Name */}
         <div className="flex items-center justify-between gap-4">
           <dt className="text-mist text-xs">
             File Name
@@ -52,6 +65,7 @@ export default function MediaCard({ file, type, uploadTime }) {
           </dd>
         </div>
 
+        {/* File Size */}
         <div className="flex items-center justify-between">
           <dt className="text-mist text-xs">
             File Size
@@ -62,6 +76,7 @@ export default function MediaCard({ file, type, uploadTime }) {
           </dd>
         </div>
 
+        {/* Media Type */}
         <div className="flex items-center justify-between">
           <dt className="text-mist text-xs">
             Media Type
@@ -72,6 +87,18 @@ export default function MediaCard({ file, type, uploadTime }) {
           </dd>
         </div>
 
+        {/* Resolution */}
+        <div className="flex items-center justify-between">
+          <dt className="text-mist text-xs">
+            Resolution
+          </dt>
+
+          <dd className="text-fog font-mono text-xs">
+            {resolution}
+          </dd>
+        </div>
+
+        {/* Upload Time */}
         <div className="flex items-center justify-between">
           <dt className="text-mist text-xs">
             Upload Time

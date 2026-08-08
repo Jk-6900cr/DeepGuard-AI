@@ -49,6 +49,8 @@ export default function UploadVideo() {
       // Create FormData
       const formData = new FormData();
       formData.append("video", file);
+      formData.append("width", metadata?.width || "");
+      formData.append("height", metadata?.height || "");
 
       // Upload video to backend
       const token = localStorage.getItem("token");
@@ -72,6 +74,7 @@ export default function UploadVideo() {
         state: {
           file,
           type: "video",
+          metadata,
           result: uploadData.prediction,
           predictionId: uploadData.predictionId,
         },

@@ -12,7 +12,7 @@ import ModelCard from "../components/processing/ModelCard";
 export default function Processing() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { file, type, predictionId } = location.state ?? {};
+  const { file, type, metadata, predictionId } = location.state ?? {};
   const uploadTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   const { progress, currentStepIndex, estimatedSecondsRemaining, currentMessage } =
@@ -59,7 +59,7 @@ export default function Processing() {
 
         <div className="grid md:grid-cols-3 gap-5">
           <StatusTimeline currentStepIndex={currentStepIndex} />
-          <MediaCard file={file} type={type} uploadTime={uploadTime} />
+          <MediaCard file={file} type={type} metadata={metadata} uploadTime={uploadTime} />
           <ModelCard />
         </div>
       </div>

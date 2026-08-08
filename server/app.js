@@ -97,6 +97,11 @@ app.post("/api/upload/image", authMiddleware, upload, async (req, res) => {
           fileType: "image",
           filename: req.file.filename,
           filepath: req.file.path,
+          fileSize: req.file.size,
+          resolution: {
+            width: Number(req.body.width) || undefined,
+            height: Number(req.body.height) || undefined,
+          },
           prediction: prediction.prediction,
           confidence: prediction.confidence,
           risk: prediction.risk,
@@ -161,6 +166,11 @@ app.post("/api/upload/video", authMiddleware, uploadVideo, async (req, res) => {
           fileType: "video",
           filename: req.file.filename,
           filepath: req.file.path,
+          fileSize: req.file.size,
+          resolution: {
+            width: Number(req.body.width) || undefined,
+            height: Number(req.body.height) || undefined,
+          },
           prediction: prediction.prediction,
           confidence: prediction.confidence,
           risk: prediction.risk,

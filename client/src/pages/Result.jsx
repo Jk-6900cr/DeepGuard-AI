@@ -192,7 +192,7 @@ export default function Result() {
               points={
                 prediction.summary
                   ? [prediction.summary]
-                  : ["Analysis completed successfully."]
+                  : ["No analysis summary was provided by the AI model."]
               }
             />
 
@@ -211,9 +211,10 @@ export default function Result() {
             <FileDetailsCard
               file={{
                 name: prediction.filename,
+                size: prediction.fileSize,
               }}
               type={fileType}
-              metadata={null}
+              metadata={prediction.resolution}
               uploadTime={uploadTime}
             />
 

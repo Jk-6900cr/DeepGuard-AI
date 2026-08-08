@@ -49,6 +49,8 @@ export default function UploadImage() {
       // Create FormData
       const formData = new FormData();
       formData.append("image", file);
+      formData.append("width", metadata?.width || "");
+      formData.append("height", metadata?.height || "");
 
       // Upload image to backend through the Vite proxy
       const token = localStorage.getItem("token");
@@ -72,6 +74,7 @@ export default function UploadImage() {
         state: {
           file,
           type: "image",
+          metadata,
           result: uploadData.prediction,
           predictionId: uploadData.predictionId,
         },
