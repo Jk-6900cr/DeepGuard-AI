@@ -1,5 +1,6 @@
 const Prediction = require("../models/Prediction");
-
+const { spawn } = require("child_process");
+const path = require("path");
 const getDashboardStats = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -107,8 +108,135 @@ const getPredictionById = async (req, res) => {
   }
 };
 
+const analyzePrediction = async (req, res) => {
+  try {
+    // Check whether an image was uploaded
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No image uploaded",
+      });
+    }
+
+    const filePath = req.file.path;
+
+    console.log("Analyzing image:", filePath);
+
+    // Path to Python script
+    const pythonScript = path.join(
+      __dirname,
+      "../python/predict.py"
+    );
+
+    // Start Python process
+    const pythonProcess = spawn(
+      "python",
+      [pythonScript, filePath]
+    );
+
+    let output = "";
+    let errorOutput = "";
+
+    // Receive Python output
+    pythonProcess.stdout.on("data", (data) => {
+      output += data.toString();
+    });
+
+    // Receive Python errors
+    pythonProcess.stderr.on("data", (data) => {
+      errorOutput += data.toString();
+    });
+
+    // Python process finished
+    pythonProcess.on("close", async (code) => {
+
+      console.log("Python process exited with code:", code);
+
+      if (code !== 0) {
+        console.error("Python Error:", errorOutput);
+
+        return res.status(500).json({
+          success: false,
+          message: "AI model prediction failed",
+          error: errorOutput,
+        });
+      }
+
+      try {
+        // Convert Python JSON output into JavaScript object
+        const result = JSON.parse(output.trim());
+
+        // Convert model terminology to your existing UI terminology
+        const prediction =
+          result.prediction === "REAL"
+            ? "Authentic"
+            : "AI Generated";
+
+        // Save prediction to MongoDB
+        const predictionRecord = await Prediction.create({
+          user: req.user.id,
+
+          fileType: "image",
+
+          filename: req.file.originalname,
+
+          filepath: req.file.path,
+
+          fileSize: req.file.size,
+
+          prediction: prediction,
+
+          confidence: result.confidence,
+
+          risk: result.risk,
+
+          summary: result.summary,
+        });
+
+        return res.status(200).json({
+          success: true,
+
+          prediction: predictionRecord,
+
+          aiResult: result,
+        });
+
+      } catch (parseError) {
+
+        console.error(
+          "Prediction JSON Parse Error:",
+          parseError
+        );
+
+        console.error(
+          "Python Output:",
+          output
+        );
+
+        return res.status(500).json({
+          success: false,
+          message: "Invalid response from AI model",
+        });
+      }
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Analyze Prediction Error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to analyze image",
+    });
+  }
+};
+
 module.exports = {
   getDashboardStats,
   getPredictionHistory,
   getPredictionById,
+  analyzePrediction,
 };

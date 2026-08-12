@@ -11,3 +11,10 @@ __pycache__/
 uploads/
 
 *.log
+
+# Trained ML model
+server/python/models/*.pt
+
+# Local test images
+server/python/ai.png
+server/python/real.jpg
