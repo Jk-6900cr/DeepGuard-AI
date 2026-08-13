@@ -38,7 +38,7 @@ export default function History() {
           );
         }
 
-        setPredictions(data.predictions);
+        setPredictions(data.predictions || []);
       } catch (err) {
         console.error("History Error:", err);
         setError(err.message);
@@ -115,6 +115,7 @@ export default function History() {
         {/* History Table */}
         {!loading && !error && predictions.length > 0 && (
           <div className="rounded-2xl bg-surface border border-edge overflow-hidden">
+
             <div className="px-6 py-5 border-b border-edge">
               <h2 className="font-display font-semibold text-fog">
                 Your Recent Scans
@@ -127,8 +128,10 @@ export default function History() {
 
             <div className="overflow-x-auto">
               <table className="w-full text-sm min-w-[750px]">
+
                 <thead>
                   <tr className="text-left text-xs text-mist border-b border-edge">
+
                     <th className="px-6 py-3 font-medium">
                       File
                     </th>
@@ -156,15 +159,20 @@ export default function History() {
                     <th className="px-6 py-3 font-medium text-right">
                       Report
                     </th>
+
                   </tr>
                 </thead>
 
                 <tbody>
+
                   {predictions.map((item) => {
-                    const result =
-                      item.prediction === "Authentic"
-                        ? "Real"
-                        : "Fake";
+
+                    // Normalize prediction from database
+                    const isReal =
+                      item.prediction === "REAL" ||
+                      item.prediction === "Authentic";
+
+                    const result = isReal ? "Real" : "Fake";
 
                     const formattedDate = new Date(
                       item.createdAt
@@ -179,20 +187,25 @@ export default function History() {
                         key={item._id}
                         className="border-b border-edge/60 last:border-0 hover:bg-surface2/60 transition-colors"
                       >
+
+                        {/* File */}
                         <td className="px-6 py-4 text-fog">
                           {item.filename}
                         </td>
 
+                        {/* Type */}
                         <td className="px-6 py-4 text-mist">
                           {item.fileType === "image"
                             ? "Image"
                             : "Video"}
                         </td>
 
+                        {/* Date */}
                         <td className="px-6 py-4 text-mist font-mono text-xs">
                           {formattedDate}
                         </td>
 
+                        {/* Result */}
                         <td className="px-6 py-4">
                           <span
                             className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
@@ -203,14 +216,17 @@ export default function History() {
                           </span>
                         </td>
 
+                        {/* Confidence */}
                         <td className="px-6 py-4 text-mist font-mono text-xs">
-                          {item.confidence}%
+                          {Number(item.confidence).toFixed(2)}%
                         </td>
 
+                        {/* Risk */}
                         <td className="px-6 py-4 text-mist">
                           {item.risk}
                         </td>
 
+                        {/* Report */}
                         <td className="px-6 py-4 text-right">
                           <Link
                             to={`/result/${item._id}`}
@@ -219,14 +235,18 @@ export default function History() {
                             View Report
                           </Link>
                         </td>
+
                       </tr>
                     );
                   })}
+
                 </tbody>
+
               </table>
             </div>
           </div>
         )}
+
       </div>
     </div>
   );

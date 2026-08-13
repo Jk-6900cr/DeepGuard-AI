@@ -165,8 +165,11 @@ export default function Result() {
       ? "image"
       : "video";
 
+  const rawPrediction = prediction.prediction;
+
   const result =
-    prediction.prediction === "Authentic"
+    rawPrediction === "REAL" ||
+      rawPrediction === "Authentic"
       ? "Authentic"
       : "AI Generated";
 

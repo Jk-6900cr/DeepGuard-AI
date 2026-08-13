@@ -156,10 +156,14 @@ else:
 # Risk level
 # ==========================================
 
-if confidence >= 0.80:
+# ==========================================
+# Risk level
+# ==========================================
+
+if ai_probability >= 0.70:
     risk = "High"
 
-elif confidence >= 0.60:
+elif ai_probability >= 0.30:
     risk = "Medium"
 
 else:
