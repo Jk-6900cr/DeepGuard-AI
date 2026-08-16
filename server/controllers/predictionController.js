@@ -130,7 +130,7 @@ const analyzePrediction = async (req, res) => {
 
     // Start Python process
     const pythonProcess = spawn(
-      "python",
+      "python3",
       [pythonScript, filePath]
     );
 
@@ -256,7 +256,7 @@ const analyzeVideoPrediction = async (req, res) => {
 
     // Start Python process
     const pythonProcess = spawn(
-      "python",
+      "python3",
       [pythonScript, filePath]
     );
 
