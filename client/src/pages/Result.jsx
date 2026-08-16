@@ -200,7 +200,45 @@ export default function Result() {
             />
 
             <DetectionCards
-              details={[]}
+              details={[
+                {
+                  title: "Prediction",
+                  status: result,
+                  description: `DeepGuard AI classified this media as ${result}.`,
+                  tone: result === "Authentic" ? "success" : "flag",
+                },
+                {
+                  title: "Confidence",
+                  status: `${prediction.confidence}%`,
+                  description: "Confidence score produced by the trained DeepGuard AI model.",
+                  tone:
+                    prediction.confidence >= 70
+                      ? "success"
+                      : prediction.confidence >= 50
+                        ? "warning"
+                        : "flag",
+                },
+                {
+                  title: "Risk Level",
+                  status: prediction.risk,
+                  description: `The detected content has been classified as ${prediction.risk.toLowerCase()} risk.`,
+                  tone:
+                    prediction.risk === "Low"
+                      ? "success"
+                      : prediction.risk === "Medium"
+                        ? "warning"
+                        : "flag",
+                },
+                {
+                  title: "Media Type",
+                  status: fileType === "image" ? "Image" : "Video",
+                  description:
+                    fileType === "image"
+                      ? "Static image analyzed by the DeepGuard AI vision model."
+                      : "Video analyzed using sampled frames from the uploaded media.",
+                  tone: "success",
+                },
+              ]}
             />
 
           </div>
@@ -228,7 +266,18 @@ export default function Result() {
         <div className="grid lg:grid-cols-2 gap-6">
 
           <Timeline
-            steps={[]}
+            steps={[
+              "Media uploaded successfully",
+              "Media preprocessing completed",
+              fileType === "image"
+                ? "Image analyzed by DeepGuard AI"  
+                : "Video frames extracted for analysis",
+              fileType === "image"
+                ? "AI image detection completed"
+                : "AI video frame analysis completed",
+              `Prediction generated: ${result}`,
+              `Risk assessment completed: ${prediction.risk} risk`,
+            ]}
           />
 
           <ModelCard

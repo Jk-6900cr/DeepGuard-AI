@@ -234,9 +234,139 @@ const analyzePrediction = async (req, res) => {
   }
 };
 
+const analyzeVideoPrediction = async (req, res) => {
+  try {
+    // Check whether a video was uploaded
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No video uploaded",
+      });
+    }
+
+    const filePath = req.file.path;
+
+    console.log("Analyzing video:", filePath);
+
+    // Path to Python video prediction script
+    const pythonScript = path.join(
+      __dirname,
+      "../python/predict_video.py"
+    );
+
+    // Start Python process
+    const pythonProcess = spawn(
+      "python",
+      [pythonScript, filePath]
+    );
+
+    let output = "";
+    let errorOutput = "";
+
+    // Receive Python output
+    pythonProcess.stdout.on("data", (data) => {
+      output += data.toString();
+    });
+
+    // Receive Python errors
+    pythonProcess.stderr.on("data", (data) => {
+      errorOutput += data.toString();
+    });
+
+    // Python process finished
+    pythonProcess.on("close", async (code) => {
+      console.log(
+        "Python video process exited with code:",
+        code
+      );
+
+      if (code !== 0) {
+        console.error(
+          "Python Video Error:",
+          errorOutput
+        );
+
+        return res.status(500).json({
+          success: false,
+          message: "AI video prediction failed",
+          error: errorOutput,
+        });
+      }
+
+      try {
+        // Convert Python JSON output into JavaScript object
+        const result = JSON.parse(output.trim());
+
+        // Convert model terminology to existing UI terminology
+        const prediction =
+          result.prediction === "REAL"
+            ? "Authentic"
+            : "AI Generated";
+
+        // Save prediction to MongoDB
+        const predictionRecord = await Prediction.create({
+          user: req.user.id,
+
+          fileType: "video",
+
+          filename: req.file.originalname,
+
+          filepath: req.file.path,
+
+          fileSize: req.file.size,
+
+          prediction: prediction,
+
+          confidence: result.confidence,
+
+          risk: result.risk,
+
+          summary: result.summary,
+        });
+
+        return res.status(200).json({
+          success: true,
+
+          prediction: predictionRecord,
+
+          aiResult: result,
+        });
+
+      } catch (parseError) {
+        console.error(
+          "Video Prediction JSON Parse Error:",
+          parseError
+        );
+
+        console.error(
+          "Python Video Output:",
+          output
+        );
+
+        return res.status(500).json({
+          success: false,
+          message: "Invalid response from video AI model",
+        });
+      }
+    });
+
+  } catch (error) {
+    console.error(
+      "Analyze Video Prediction Error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to analyze video",
+    });
+  }
+};
+
 module.exports = {
   getDashboardStats,
   getPredictionHistory,
   getPredictionById,
   analyzePrediction,
+  analyzeVideoPrediction,
 };

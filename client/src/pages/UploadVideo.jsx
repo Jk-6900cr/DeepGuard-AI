@@ -46,29 +46,32 @@ export default function UploadVideo() {
     setIsAnalyzing(true);
 
     try {
-      // Create FormData
       const formData = new FormData();
-      formData.append("video", file);
-      formData.append("width", metadata?.width || "");
-      formData.append("height", metadata?.height || "");
 
-      // Upload video to backend
+      formData.append("video", file);
+
       const token = localStorage.getItem("token");
 
-      const uploadResponse = await fetch("http://localhost:5000/api/upload/video", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error(`Upload failed: ${uploadResponse.status}`);
-      }
+      const uploadResponse = await fetch(
+        "http://localhost:5000/api/predictions/analyze-video",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       const uploadData = await uploadResponse.json();
-      console.log("Upload Success:", uploadData);
+
+      if (!uploadResponse.ok) {
+        throw new Error(
+          uploadData.message || `Analysis failed: ${uploadResponse.status}`
+        );
+      }
+
+      console.log("Video Analysis Success:", uploadData);
 
       navigate("/processing", {
         state: {
@@ -76,11 +79,13 @@ export default function UploadVideo() {
           type: "video",
           metadata,
           result: uploadData.prediction,
-          predictionId: uploadData.predictionId,
+          predictionId: uploadData.prediction?._id,
         },
       });
+
     } catch (err) {
-      console.error("API Error:", err);
+      console.error("Video Analysis Error:", err);
+      setError(err.message);
     } finally {
       setIsAnalyzing(false);
     }

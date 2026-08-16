@@ -9,6 +9,7 @@ const {
   getPredictionHistory,
   getPredictionById,
   analyzePrediction,
+  analyzeVideoPrediction,
 } = require("../controllers/predictionController");
 
 const router = express.Router();
@@ -36,6 +37,33 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
+});
+
+// ==========================================
+// Video Multer configuration
+// ==========================================
+
+const videoStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(
+      null,
+      path.join(__dirname, "../uploads/videos")
+    );
+  },
+
+  filename: function (req, file, cb) {
+    const uniqueName =
+      Date.now() +
+      "-" +
+      Math.round(Math.random() * 1E9) +
+      path.extname(file.originalname);
+
+    cb(null, uniqueName);
+  },
+});
+
+const videoUpload = multer({
+  storage: videoStorage,
 });
 
 // ==========================================
@@ -67,6 +95,17 @@ router.post(
   authMiddleware,
   upload.single("image"),
   analyzePrediction
+);
+
+// ==========================================
+// Analyze video
+// ==========================================
+
+router.post(
+  "/analyze-video",
+  authMiddleware,
+  videoUpload.single("video"),
+  analyzeVideoPrediction
 );
 
 // ==========================================

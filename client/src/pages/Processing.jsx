@@ -15,10 +15,16 @@ export default function Processing() {
   const { file, type, metadata, predictionId } = location.state ?? {};
   const uploadTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-  const { progress, currentStepIndex, estimatedSecondsRemaining, currentMessage } =
-    useProcessingSimulation(() => {
+  const {
+    progress,
+    currentStepIndex,
+    estimatedSecondsRemaining,
+    currentMessage,
+  } = useProcessingSimulation(() => {
+    if (predictionId) {
       navigate(`/result/${predictionId}`);
-    });
+    }
+  });
 
   return (
     <div className="relative min-h-screen bg-ink px-6 py-14 overflow-hidden">
