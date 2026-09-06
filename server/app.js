@@ -10,12 +10,14 @@ const predictionRoutes = require("./routes/predictionRoutes");
 const path = require("path");
 const { spawn } = require("child_process");
 const connectDB = require("./config/db");
+
 connectDB();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
 app.use("/api/auth", authRoutes);
 app.use("/api/predictions", predictionRoutes);
 
@@ -23,11 +25,15 @@ app.get("/", (req, res) => {
   res.send("DeepGuard AI Backend is Running 🚀");
 });
 
+// ==========================================
+// TEST IMAGE ANALYSIS
+// ==========================================
+
 app.get("/api/analyze/image", (req, res) => {
   // Temporary image path for testing
   const imagePath = path.join(__dirname, "uploads", "test.jpg");
 
-  const python = spawn("python", [
+  const python = spawn("python3", [
     path.join(__dirname, "python", "predict.py"),
     imagePath,
   ]);
@@ -61,13 +67,17 @@ app.get("/api/analyze/image", (req, res) => {
   });
 });
 
+// ==========================================
+// IMAGE UPLOAD + AI ANALYSIS
+// ==========================================
+
 app.post("/api/upload/image", authMiddleware, upload, async (req, res) => {
   try {
     console.log("Uploaded File:", req.file);
 
     const imagePath = req.file.path;
 
-    const python = spawn("python", [
+    const python = spawn("python3", [
       path.join(__dirname, "python", "predict.py"),
       imagePath,
     ]);
@@ -92,16 +102,19 @@ app.post("/api/upload/image", authMiddleware, upload, async (req, res) => {
 
       try {
         const prediction = JSON.parse(result);
+
         const savedPrediction = await Prediction.create({
           user: req.user.id,
           fileType: "image",
           filename: req.file.filename,
           filepath: req.file.path,
           fileSize: req.file.size,
+
           resolution: {
             width: Number(req.body.width) || undefined,
             height: Number(req.body.height) || undefined,
           },
+
           prediction: prediction.prediction,
           confidence: prediction.confidence,
           risk: prediction.risk,
@@ -116,6 +129,8 @@ app.post("/api/upload/image", authMiddleware, upload, async (req, res) => {
           prediction,
         });
       } catch (err) {
+        console.error("Prediction JSON Error:", err);
+
         res.status(500).json({
           success: false,
           message: "Invalid JSON returned by Python",
@@ -130,13 +145,17 @@ app.post("/api/upload/image", authMiddleware, upload, async (req, res) => {
   }
 });
 
+// ==========================================
+// VIDEO UPLOAD + AI ANALYSIS
+// ==========================================
+
 app.post("/api/upload/video", authMiddleware, uploadVideo, async (req, res) => {
   try {
     console.log("Uploaded Video:", req.file);
 
     const videoPath = req.file.path;
 
-    const python = spawn("python", [
+    const python = spawn("python3", [
       path.join(__dirname, "python", "predict_video.py"),
       videoPath,
     ]);
@@ -161,16 +180,19 @@ app.post("/api/upload/video", authMiddleware, uploadVideo, async (req, res) => {
 
       try {
         const prediction = JSON.parse(result);
+
         const savedPrediction = await Prediction.create({
           user: req.user.id,
           fileType: "video",
           filename: req.file.filename,
           filepath: req.file.path,
           fileSize: req.file.size,
+
           resolution: {
             width: Number(req.body.width) || undefined,
             height: Number(req.body.height) || undefined,
           },
+
           prediction: prediction.prediction,
           confidence: prediction.confidence,
           risk: prediction.risk,
@@ -185,6 +207,8 @@ app.post("/api/upload/video", authMiddleware, uploadVideo, async (req, res) => {
           prediction,
         });
       } catch (err) {
+        console.error("Prediction JSON Error:", err);
+
         res.status(500).json({
           success: false,
           message: "Invalid JSON returned by Python",
@@ -199,7 +223,12 @@ app.post("/api/upload/video", authMiddleware, uploadVideo, async (req, res) => {
   }
 });
 
+// ==========================================
+// START SERVER
+// ==========================================
+
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

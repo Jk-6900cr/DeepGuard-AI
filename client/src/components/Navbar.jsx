@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
 import { HiOutlineShieldCheck } from "react-icons/hi2";
 
 const NAV_LINKS = [
-  { label: "Home", to: "/" },
-  { label: "Features", to: "/#features" },
-  { label: "About", to: "/#about" },
-  { label: "Contact", to: "/#contact" },
+  { label: "Home", target: "home" },
+  { label: "Features", target: "features" },
+  { label: "About", target: "about" },
+  { label: "Contact", target: "contact" },
 ];
 
 export default function Navbar() {
@@ -16,9 +16,37 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
+
     window.addEventListener("scroll", onScroll);
+
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const handleNavigation = (target) => {
+    setMobileOpen(false);
+
+    if (target === "home") {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      return;
+    }
+
+    const element = document.getElementById(target);
+
+    if (element) {
+      const navbarHeight = 70;
+
+      const elementPosition =
+        element.getBoundingClientRect().top + window.scrollY;
+
+      window.scrollTo({
+        top: elementPosition - navbarHeight,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
     <header
@@ -29,56 +57,38 @@ export default function Navbar() {
       }`}
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-10 h-16">
+
         {/* Logo */}
-        <a
-          href="/"
-          onClick={(e) => {
-            e.preventDefault();
-            window.location.assign('/');
-          }}
+        <button
+          onClick={() => handleNavigation("home")}
           className="flex items-center gap-2 group"
         >
           <span className="relative flex items-center justify-center w-8 h-8 rounded-lg border border-scan/40 bg-surface group-hover:border-scan transition-colors">
             <HiOutlineShieldCheck className="text-scan text-lg" />
           </span>
+
           <span className="font-display font-semibold text-[15px] tracking-tight text-fog">
             DeepGuard <span className="text-scan">AI</span>
           </span>
-        </a>
+        </button>
 
-        {/* Desktop links */}
+        {/* Desktop Links */}
         <ul className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => {
-            const isHome = link.to === "/";
-            return (
-              <li key={link.label}>
-                {isHome ? (
-                  <a
-                    href="/"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.location.assign('/');
-                    }}
-                    className="relative text-sm text-mist hover:text-fog transition-colors duration-200 py-1 group"
-                  >
-                    {link.label}
-                    <span className="absolute left-0 -bottom-0.5 w-0 h-px bg-scan transition-all duration-300 group-hover:w-full" />
-                  </a>
-                ) : (
-                  <NavLink
-                    to={link.to}
-                    className="relative text-sm text-mist hover:text-fog transition-colors duration-200 py-1 group"
-                  >
-                    {link.label}
-                    <span className="absolute left-0 -bottom-0.5 w-0 h-px bg-scan transition-all duration-300 group-hover:w-full" />
-                  </NavLink>
-                )}
-              </li>
-            );
-          })}
+          {NAV_LINKS.map((link) => (
+            <li key={link.label}>
+              <button
+                onClick={() => handleNavigation(link.target)}
+                className="relative text-sm text-mist hover:text-fog transition-colors duration-200 py-1 group"
+              >
+                {link.label}
+
+                <span className="absolute left-0 -bottom-0.5 w-0 h-px bg-scan transition-all duration-300 group-hover:w-full" />
+              </button>
+            </li>
+          ))}
         </ul>
 
-        {/* Auth buttons */}
+        {/* Auth Buttons */}
         <div className="hidden md:flex items-center gap-3">
           <Link
             to="/login"
@@ -86,6 +96,7 @@ export default function Navbar() {
           >
             Log in
           </Link>
+
           <Link
             to="/signup"
             className="text-sm font-medium text-ink bg-scan px-4 py-2 rounded-lg hover:brightness-110 hover:shadow-[0_0_20px_rgba(0,229,199,0.35)] transition-all duration-200"
@@ -94,7 +105,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile toggle */}
+        {/* Mobile Toggle */}
         <button
           onClick={() => setMobileOpen((v) => !v)}
           className="md:hidden text-fog text-2xl p-1"
@@ -104,25 +115,29 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile Menu */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          mobileOpen ? "max-h-96 border-t border-edge" : "max-h-0"
+          mobileOpen
+            ? "max-h-96 border-t border-edge"
+            : "max-h-0"
         } bg-ink/95 backdrop-blur-lg`}
       >
         <ul className="flex flex-col px-6 py-4 gap-4">
+
           {NAV_LINKS.map((link) => (
             <li key={link.label}>
-              <NavLink
-                to={link.to}
-                onClick={() => setMobileOpen(false)}
+              <button
+                onClick={() => handleNavigation(link.target)}
                 className="text-sm text-mist hover:text-fog transition-colors"
               >
                 {link.label}
-              </NavLink>
+              </button>
             </li>
           ))}
+
           <div className="flex flex-col gap-3 pt-2 border-t border-edge">
+
             <Link
               to="/login"
               onClick={() => setMobileOpen(false)}
@@ -130,6 +145,7 @@ export default function Navbar() {
             >
               Log in
             </Link>
+
             <Link
               to="/signup"
               onClick={() => setMobileOpen(false)}
@@ -137,6 +153,7 @@ export default function Navbar() {
             >
               Sign up
             </Link>
+
           </div>
         </ul>
       </div>

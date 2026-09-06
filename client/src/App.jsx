@@ -11,6 +11,8 @@ import UploadImage from "./pages/UploadImage";
 import UploadVideo from "./pages/UploadVideo";
 import History from "./pages/History";
 import Profile from "./pages/Profile";
+import Reports from "./pages/reports";
+import Settings from "./pages/Settings";
 import Result from "./pages/Result";
 
 export default function App() {
@@ -57,10 +59,26 @@ export default function App() {
             }
           />
           <Route
+            path="/reports"
+            element={
+              <ProtectedRoute>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/profile"
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             }
           />

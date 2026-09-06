@@ -8,23 +8,42 @@ import {
 export const AuthContext = createContext(undefined);
 
 export function AuthProvider({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(checkIsAuthenticated());
-  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    checkIsAuthenticated()
+  );
 
-  // TODO backend: POST /api/auth/login { identifier, password } -> { token, user }
-  // Replace persistAuthenticated() with setToken(token) from utils/auth.js.
+  // Restore saved user when the application starts
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+
+    if (!savedUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(savedUser);
+    } catch (error) {
+      console.error("Failed to restore user:", error);
+      localStorage.removeItem("user");
+      return null;
+    }
+  });
+
   const login = useCallback(async (credentials) => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: credentials.identifier,
-          password: credentials.password,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: credentials.identifier,
+            password: credentials.password,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -38,10 +57,15 @@ export function AuthProvider({ children }) {
       // Store JWT token
       localStorage.setItem("token", data.token);
 
-      // Temporary authentication
+      // Store authenticated user
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.user);
+      }
+
+      // Update authentication state
       persistAuthenticated();
       setIsAuthenticated(true);
-      setUser(data.user);
 
       return {
         success: true,
@@ -55,21 +79,23 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // TODO backend: POST /api/auth/signup { fullName, email, mobile, otp } -> { token, user }
   const signup = useCallback(async (details) => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName: details.fullName,
-          email: details.email,
-          mobile: details.mobile,
-          password: details.password,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullName: details.fullName,
+            email: details.email,
+            mobile: details.mobile,
+            password: details.password,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -80,10 +106,20 @@ export function AuthProvider({ children }) {
         };
       }
 
-      // Temporary authentication
+      // Store JWT token if signup returns one
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      // Store authenticated user
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.user);
+      }
+
+      // Update authentication state
       persistAuthenticated();
       setIsAuthenticated(true);
-      setUser(data.user);
 
       return {
         success: true,
@@ -98,12 +134,26 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = useCallback(() => {
+    // Remove stored authentication data
     clearAuthenticated();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
     setUser(null);
     setIsAuthenticated(false);
   }, []);
 
-  const value = { isAuthenticated, user, login, signup, logout };
+  const value = {
+    isAuthenticated,
+    user,
+    login,
+    signup,
+    logout,
+  };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

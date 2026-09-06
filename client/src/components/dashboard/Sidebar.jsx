@@ -19,7 +19,7 @@ const NAV_ITEMS = [
   { label: "Upload Image", to: "/upload/image", icon: HiOutlinePhoto },
   { label: "Upload Video", to: "/upload/video", icon: HiOutlineVideoCamera },
   { label: "Scan History", to: "/history", icon: HiOutlineClock },
-  { label: "Reports", to: "/result", icon: HiOutlineDocumentChartBar },
+  { label: "Reports", to: "/reports", icon: HiOutlineDocumentChartBar },
   { label: "Profile", to: "/profile", icon: HiOutlineUser },
   { label: "Settings", to: "/settings", icon: HiOutlineCog6Tooth },
 ];
