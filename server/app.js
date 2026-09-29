@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const predictionRoutes = require("./routes/predictionRoutes");
 const path = require("path");
 const { spawn } = require("child_process");
+const getPythonExecutable = require("./utils/python");
 const connectDB = require("./config/db");
 
 connectDB();
@@ -33,7 +34,7 @@ app.get("/api/analyze/image", (req, res) => {
   // Temporary image path for testing
   const imagePath = path.join(__dirname, "uploads", "test.jpg");
 
-  const python = spawn("python3", [
+  const python = spawn(getPythonExecutable(), [
     path.join(__dirname, "python", "predict.py"),
     imagePath,
   ]);
@@ -77,7 +78,7 @@ app.post("/api/upload/image", authMiddleware, upload, async (req, res) => {
 
     const imagePath = req.file.path;
 
-    const python = spawn("python3", [
+    const python = spawn(getPythonExecutable(), [
       path.join(__dirname, "python", "predict.py"),
       imagePath,
     ]);
@@ -155,7 +156,7 @@ app.post("/api/upload/video", authMiddleware, uploadVideo, async (req, res) => {
 
     const videoPath = req.file.path;
 
-    const python = spawn("python3", [
+    const python = spawn(getPythonExecutable(), [
       path.join(__dirname, "python", "predict_video.py"),
       videoPath,
     ]);

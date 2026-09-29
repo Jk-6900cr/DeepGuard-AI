@@ -1,6 +1,7 @@
 const Prediction = require("../models/Prediction");
 const { spawn } = require("child_process");
 const path = require("path");
+const getPythonExecutable = require("../utils/python");
 const getDashboardStats = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -130,7 +131,7 @@ const analyzePrediction = async (req, res) => {
 
     // Start Python process
     const pythonProcess = spawn(
-      "python3",
+      getPythonExecutable(),
       [pythonScript, filePath]
     );
 
@@ -256,7 +257,7 @@ const analyzeVideoPrediction = async (req, res) => {
 
     // Start Python process
     const pythonProcess = spawn(
-      "python3",
+      getPythonExecutable(),
       [pythonScript, filePath]
     );
 
