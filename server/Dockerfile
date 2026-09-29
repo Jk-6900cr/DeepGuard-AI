@@ -34,6 +34,8 @@ COPY server/python/requirements.txt ./python/requirements.txt
 RUN pip3 install --no-cache-dir --break-system-packages \
     -r ./python/requirements.txt
 
+# Pre-download Hugging Face model during image build
+RUN python3 -c "from transformers import AutoImageProcessor, ViTForImageClassification; AutoImageProcessor.from_pretrained('google/vit-base-patch16-224-in21k'); ViTForImageClassification.from_pretrained('google/vit-base-patch16-224-in21k')"
 # ==========================================
 # Copy backend
 # ==========================================
