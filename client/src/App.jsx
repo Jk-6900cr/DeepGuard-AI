@@ -11,7 +11,7 @@ import UploadImage from "./pages/UploadImage";
 import UploadVideo from "./pages/UploadVideo";
 import History from "./pages/History";
 import Profile from "./pages/Profile";
-import Reports from "./pages/reports";
+import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Result from "./pages/Result";
 
