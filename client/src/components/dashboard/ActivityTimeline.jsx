@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../../config";
 import {
   HiOutlineArrowUpTray,
   HiOutlineCpuChip,
@@ -14,7 +15,7 @@ export default function ActivityTimeline() {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-          "http://localhost:5000/api/predictions/history",
+          `${API_URL}/api/predictions/history`,
           {
             method: "GET",
             headers: {

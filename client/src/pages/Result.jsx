@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../config";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { HiOutlineFaceFrown } from "react-icons/hi2";
@@ -89,7 +90,7 @@ export default function Result() {
         }
 
         const response = await fetch(
-          `http://localhost:5000/api/predictions/${id}`,
+          `${API_URL}/api/predictions/${id}`,
           {
             method: "GET",
             headers: {

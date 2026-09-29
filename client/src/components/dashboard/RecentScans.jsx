@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../../config";
 import { Link } from "react-router-dom";
 import EmptyState from "./EmptyState";
 
@@ -17,7 +18,7 @@ export default function RecentScans() {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-          "http://localhost:5000/api/predictions/history",
+          `${API_URL}/api/predictions/history`,
           {
             method: "GET",
             headers: {

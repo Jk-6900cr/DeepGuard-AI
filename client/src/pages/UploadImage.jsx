@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_URL } from "../config";
 import { HiOutlinePhoto } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 
@@ -55,7 +56,7 @@ export default function UploadImage() {
       // Upload image to backend through the Vite proxy
       const token = localStorage.getItem("token");
 
-      const uploadResponse = await fetch("http://localhost:5000/api/upload/image", {
+      const uploadResponse = await fetch(`${API_URL}/api/upload/image`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

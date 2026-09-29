@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../config";
 import { Link } from "react-router-dom";
 
 const badgeClasses = {
@@ -21,7 +22,7 @@ export default function History() {
         }
 
         const response = await fetch(
-          "http://localhost:5000/api/predictions/history",
+          `${API_URL}/api/predictions/history`,
           {
             method: "GET",
             headers: {

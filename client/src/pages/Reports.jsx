@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../config";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 
 export default function Reports() {
@@ -17,10 +18,10 @@ export default function Reports() {
         };
 
         const [statsResponse, historyResponse] = await Promise.all([
-          fetch("http://localhost:5000/api/predictions/dashboard", {
+          fetch(`${API_URL}/api/predictions/dashboard`, {
             headers,
           }),
-          fetch("http://localhost:5000/api/predictions/history", {
+          fetch(`${API_URL}/api/predictions/history`, {
             headers,
           }),
         ]);

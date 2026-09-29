@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_URL } from "../config";
 import { HiOutlineVideoCamera } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 
@@ -53,7 +54,7 @@ export default function UploadVideo() {
       const token = localStorage.getItem("token");
 
       const uploadResponse = await fetch(
-        "http://localhost:5000/api/predictions/analyze-video",
+        `${API_URL}/api/predictions/analyze-video`,
         {
           method: "POST",
           headers: {

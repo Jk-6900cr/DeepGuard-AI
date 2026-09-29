@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { createContext, useCallback, useState } from "react";
 import {
   checkIsAuthenticated,
@@ -32,7 +33,7 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (credentials) => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        `${API_URL}/api/auth/login`,
         {
           method: "POST",
           headers: {
@@ -82,7 +83,7 @@ export function AuthProvider({ children }) {
   const signup = useCallback(async (details) => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/signup",
+        `${API_URL}/api/auth/signup`,
         {
           method: "POST",
           headers: {

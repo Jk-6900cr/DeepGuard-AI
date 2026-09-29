@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 
 export default function Upload() {
@@ -51,7 +52,7 @@ export default function Upload() {
       formData.append("image", selectedFile);
 
       const response = await fetch(
-        "http://localhost:5000/api/predictions/analyze",
+        `${API_URL}/api/predictions/analyze`,
         {
           method: "POST",
 

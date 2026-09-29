@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { API_URL } from "../config";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import WelcomeSection from "../components/dashboard/WelcomeSection";
 import StatsCards from "../components/dashboard/StatsCards";
@@ -30,7 +30,7 @@ export default function Dashboard() {
         }
 
         const response = await fetch(
-          "http://localhost:5000/api/predictions/dashboard",
+          `${API_URL}/api/predictions/dashboard`,
           {
             method: "GET",
             headers: {
