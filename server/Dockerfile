@@ -5,7 +5,10 @@
 
 FROM node:20-bookworm
 
-# Install Python and required system packages
+# ==========================================
+# Install Python and system dependencies
+# ==========================================
+
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
@@ -14,7 +17,10 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# ==========================================
+# Working directory
+# ==========================================
+
 WORKDIR /app
 
 # ==========================================
@@ -34,16 +40,23 @@ COPY server/python/requirements.txt ./python/requirements.txt
 RUN pip3 install --no-cache-dir --break-system-packages \
     -r ./python/requirements.txt
 
-# Download DeepGuard trained model from private Hugging Face repository
-RUN python3 -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='Jk-59/deepguard-vit-model', filename='deepguard_vit_epoch2.pt', token='${HF_TOKEN}', local_dir='/app/python/models')"
 # ==========================================
 # Copy backend
 # ==========================================
 
 COPY server/ ./
 
-# Create upload directories
-RUN mkdir -p uploads uploads/videos
+# ==========================================
+# Create directories
+# ==========================================
+
+RUN mkdir -p uploads uploads/videos python/models
+
+# ==========================================
+# Startup script
+# ==========================================
+
+RUN chmod +x start.sh
 
 # ==========================================
 # Environment
@@ -51,11 +64,10 @@ RUN mkdir -p uploads uploads/videos
 
 ENV NODE_ENV=production
 
-# Backend port
 EXPOSE 5000
 
 # ==========================================
-# Start server
+# Start DeepGuard
 # ==========================================
 
-CMD ["node", "app.js"]
+CMD ["./start.sh"]
