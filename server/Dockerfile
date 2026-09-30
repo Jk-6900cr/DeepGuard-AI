@@ -34,8 +34,8 @@ COPY server/python/requirements.txt ./python/requirements.txt
 RUN pip3 install --no-cache-dir --break-system-packages \
     -r ./python/requirements.txt
 
-# Pre-download Hugging Face model during image build
-RUN python3 -c "from transformers import AutoImageProcessor, ViTForImageClassification; AutoImageProcessor.from_pretrained('google/vit-base-patch16-224-in21k'); ViTForImageClassification.from_pretrained('google/vit-base-patch16-224-in21k')"
+# Download DeepGuard trained model from private Hugging Face repository
+RUN python3 -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='Jk-59/deepguard-vit-model', filename='deepguard_vit_epoch2.pt', token='${HF_TOKEN}', local_dir='/app/python/models')"
 # ==========================================
 # Copy backend
 # ==========================================
